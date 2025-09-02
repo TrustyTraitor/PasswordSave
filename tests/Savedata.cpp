@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <bitset>
 #include <format>
+#include <iostream>
 
 #include "PasswordSave.h"
 

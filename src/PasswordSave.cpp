@@ -5,35 +5,52 @@
 #include <cmath> // Would be nice if this could be replaced
 
 namespace PasswordSave {
-    std::string uitob26(unsigned int input) {
-        constexpr int base = 26;
-        std::string output = "AAAAAAA"; // TODO: This shouldn't be hard coded.
 
-        // Finds the maximum necessary exponent
-        int exponent = 0;
-        while (input > std::pow(base, exponent++)){};
-        --exponent;
+    namespace {
+        std::string uitobX(unsigned int input, const unsigned int BASE) {
+            std::string output;
 
-        size_t idx = 6;
-        while (input != 0) {
-            const unsigned int remainder = input % base;
-            input /= base;
+            // Finds the maximum necessary exponent
+            int exponent = 0;
+            while (input > std::pow(BASE, exponent++)){};
+            --exponent;
 
-            output[idx--] = static_cast<char>(remainder + 'A');
+            while (input != 0) {
+                const unsigned int remainder = input % BASE;
+                input /= BASE;
+
+                output += static_cast<char>(remainder + 'A');
+            }
+
+            return output;
         }
 
-        return output;
+        unsigned int bXtoui(const std::string& input, const unsigned int BASE) {
+            unsigned int output = 0;
+
+            unsigned int place = input.length()-1;
+            for (const auto v: input) {
+                const unsigned int val = static_cast<unsigned int>(v) - 'A';
+                output += val * static_cast<unsigned int>(std::pow(BASE, place--));
+            }
+
+            return output;
+        }
+    }
+
+    std::string uitob2(const unsigned int input) {
+        return uitobX(input, 2);
+    }
+
+    unsigned int b2toui(const std::string& input) {
+        return bXtoui(input, 2);
+    }
+
+    std::string uitob26(const unsigned int input) {
+        return uitobX(input, 26);
     }
 
     unsigned int b26toui(const std::string& input) {
-        unsigned int output = 0;
-
-        unsigned int place = input.length()-1;
-        for (const auto v: input) {
-            const unsigned int val = static_cast<unsigned int>(v) - 'A';
-            output += val * static_cast<unsigned int>(std::pow(26, place--));
-        }
-
-        return output;
+        return bXtoui(input, 26);
     }
 }
