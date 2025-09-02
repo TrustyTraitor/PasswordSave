@@ -22,17 +22,22 @@ namespace Savedata {
             uint swordQuality : 3 = 0; // Max sword quality is 7
             uint armorQuality : 3 = 0; // Max armor quality is 7
 
-            // Simple boolean on if the dungeon has been completed
-            uint storyDungeon1 : 1 = 0;
-            uint storyDungeon2 : 1 = 0;
-            uint storyDungeon3 : 1 = 0;
-            uint storyDungeon4 : 1 = 0;
+            // Main dungeons are linear
+            uint storyDungeonCompletion : 3 = 0; // Max (linear) dungeons are 7.
+            /* If dungeons are non-linear, then individual bits will be required. This will also take more bits.
+            * uint storyDungeon1 : 1 = 0;
+            * uint storyDungeon2 : 1 = 0;
+            * uint storyDungeon3 : 1 = 0;
+            * uint storyDungeon4 : 1 = 0;
+             */
 
-            uint sideDungeon1 : 1 = 0;
-            uint sideDungeon2 : 1 = 0;
-            uint sideDungeon3 : 1 = 0;
-            uint sideDungeon4 : 1 = 0;
-            // 8 + 18 = 26 bit used above. 6 remaining
+            // Simple boolean on if the dungeon has been completed.
+            // Side dungeons are optional and may be completed in different orders, and as such, require separate boolean flags
+            bool sideDungeon1 : 1 = 0;
+            bool sideDungeon2 : 1 = 0;
+            bool sideDungeon3 : 1 = 0;
+            bool sideDungeon4 : 1 = 0;
+            // 8 + 18 = 26 bit used above. 7 remaining
             // Maybe status effects? Side quests? Skills/Class?
             // Leaning towards Class: Classes could be linear, with new skills being obtained simply by leveling up.
         };
@@ -67,15 +72,9 @@ namespace Savedata {
         << " - PotionQuality: " << SD.potionQuality << " (" << getQuality(SD.potionQuality) << ") " << "\n"
         << " - Sword Quality: " << SD.swordQuality << " (" <<getQuality(SD.swordQuality) <<  ") " << "\n"
         << " - Armor Quality: " << SD.armorQuality << " (" << getQuality(SD.armorQuality) << ") " << "\n"
-        << "Dungeon Completion: (0 is uncompleted, 1 is completed)" << "\n"
-        << " - Main Dungeon 1: " << SD.storyDungeon1 << "\n"
-        << "  -- Side Dungeon 1: " << SD.sideDungeon1 << "\n"
-        << " - Main Dungeon 2: " << SD.storyDungeon2 << "\n"
-        << "  -- Side Dungeon 2: " << SD.sideDungeon2 << "\n"
-        << " - Main Dungeon 3: " << SD.storyDungeon3 << "\n"
-        << "  -- Side Dungeon 3: " << SD.sideDungeon3 << "\n"
-        << " - Main Dungeon 4: " << SD.storyDungeon4 << "\n"
-        << "  -- Side Dungeon 4: " << SD.sideDungeon4 << std::endl;
+        << "Dungeons Completion: " << "\n"
+        << " - " << SD.storyDungeonCompletion << "\n"
+        << std::endl;
     }
 
     inline void printSaveTechnical(const SaveData SD) {
@@ -105,10 +104,7 @@ int main() {
         .potionCount = 6,
         .swordQuality = 3,
         .armorQuality = 4,
-        .storyDungeon1 = 1,
-        .storyDungeon2 = 1,
-        .storyDungeon3 = 0,
-        .storyDungeon4 = 0,
+        .storyDungeonCompletion = 4,
         .sideDungeon1 = 1,
         .sideDungeon2 = 0,
         .sideDungeon3 = 0,
