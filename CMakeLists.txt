@@ -15,9 +15,17 @@ include_directories(include)
 add_library(PasswordSave SHARED src/PasswordSave.cpp)
 add_library(PasswordSave::Lib ALIAS PasswordSave)
 
-# Optionally add the executable if requested via subdirectory
-if(TARGET PasswordSaveExec)
-    # Create a meta-target "Full" that includes both
-    add_library(PasswordSave::Full INTERFACE)
-    target_link_libraries(PasswordSave::Full INTERFACE PasswordSave::Lib PasswordSave::Exec)
+target_include_directories(PasswordSave
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>  # Optional, if you support installation
+)
+
+add_library(PasswordSaveFull INTERFACE)
+target_link_libraries(PasswordSaveFull INTERFACE PasswordSave::Lib)
+
+if(TARGET PasswordSave::Exec)
+    target_link_libraries(PasswordSaveFull INTERFACE PasswordSave::Exec)
 endif()
+
+add_library(PasswordSave::Full ALIAS PasswordSaveFull)
