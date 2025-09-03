@@ -4,28 +4,35 @@ project(PasswordSave)
 set(CMAKE_CXX_STANDARD 23)
 
 # Output directories
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Include headers
-include_directories(include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Create the shared library
-add_library(PasswordSave SHARED src/PasswordSave.cpp)
-add_library(PasswordSave::Lib ALIAS PasswordSave)
+add_library(PasswordSave SHARED
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/PasswordSave.cpp)
 
-target_include_directories(PasswordSave
-        PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>  # Optional, if you support installation
-)
+# Internal variable to allow parent projects to enable the executable
+set(_PASSWORDSAVE_BUILD_EXECUTABLE FALSE)
 
-add_library(PasswordSaveFull INTERFACE)
-target_link_libraries(PasswordSaveFull INTERFACE PasswordSave::Lib)
-
-if(TARGET PasswordSave::Exec)
-    target_link_libraries(PasswordSaveFull INTERFACE PasswordSave::Exec)
+# If this is the top-level project, build executable by default
+if (PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(_PASSWORDSAVE_BUILD_EXECUTABLE TRUE)
 endif()
 
-add_library(PasswordSave::Full ALIAS PasswordSaveFull)
+# Allow parent project to override this before including
+if (DEFINED PasswordSave_ENABLE_EXECUTABLE)
+    set(_PASSWORDSAVE_BUILD_EXECUTABLE ${PasswordSave_ENABLE_EXECUTABLE})
+endif()
+
+# Only build executable if requested
+if (_PASSWORDSAVE_BUILD_EXECUTABLE)
+    add_executable(PasswordSaveExec
+            ${CMAKE_CURRENT_SOURCE_DIR}/test/GameSaveTest.cpp
+    )
+    target_link_libraries(PasswordSaveExec PRIVATE PasswordSave)
+    add_executable(PasswordSave::Exec ALIAS PasswordSaveExec)
+endif()
