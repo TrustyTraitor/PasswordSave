@@ -8,11 +8,12 @@
 namespace PasswordSave {
 
     namespace {
-        std::string uitobX(unsigned int input, const unsigned int BASE) {
+        template<unsigned int BASE, typename T>
+        std::string uitobX(T input) {
             std::string output;
 
             // Finds the maximum necessary exponent
-            int exponent = 0;
+            unsigned int exponent = 0;
             while (input > std::pow(BASE, exponent++)){};
             --exponent;
 
@@ -23,13 +24,15 @@ namespace PasswordSave {
                 output += static_cast<char>(remainder + 'A');
             }
 
+            //
             std::ranges::reverse(output);
 
             return output;
         }
 
-        unsigned int bXtoui(const std::string& input, const unsigned int BASE) {
-            unsigned int output = 0;
+        template<unsigned int BASE, typename T>
+        T bXtoui(const std::string& input) {
+            T output = 0;
 
             unsigned int place = input.length()-1;
             for (const auto v: input) {
@@ -41,11 +44,14 @@ namespace PasswordSave {
         }
     }
 
-    std::string uitob26(const unsigned int input) {
-        return uitobX(input, 26);
+    template<typename T>
+    std::string uitob26(const T input) {
+        return uitobX<26, T>(input);
     }
 
-    unsigned int b26toui(const std::string& input) {
-        return bXtoui(input, 26);
+    template<typename T>
+    T b26toui(const std::string& input) {
+        return bXtoui<26, T>(input);
     }
+
 }

@@ -16,7 +16,9 @@ add_library(PasswordSave SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/src/PasswordSave.cpp)
 
 add_library(PasswordSave::Lib ALIAS PasswordSave)
-target_include_directories(PasswordSave PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(PasswordSave PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Internal variable to allow parent projects to enable the executable
 set(_PASSWORDSAVE_BUILD_EXECUTABLE FALSE)

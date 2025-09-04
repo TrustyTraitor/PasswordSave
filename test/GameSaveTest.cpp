@@ -73,8 +73,13 @@ namespace Savedata {
         << " - PotionQuality: " << SD.potionQuality << " (" << getQuality(SD.potionQuality) << ") " << "\n"
         << " - Sword Quality: " << SD.swordQuality << " (" <<getQuality(SD.swordQuality) <<  ") " << "\n"
         << " - Armor Quality: " << SD.armorQuality << " (" << getQuality(SD.armorQuality) << ") " << "\n"
-        << "Dungeons Completion: " << "\n"
+        << "Dungeons Completed: " << "\n"
         << " - " << SD.storyDungeonCompletion << "\n"
+        << " - Side Dungeon Completion: " << "\n"
+        << "   - Side Dungeon 1: " << SD.sideDungeon1 << "\n"
+        << "   - Side Dungeon 2: " << SD.sideDungeon2 << "\n"
+        << "   - Side Dungeon 3: " << SD.sideDungeon3 << "\n"
+        << "   - Side Dungeon 4: " << SD.sideDungeon4 << "\n"
         << std::endl;
     }
 
@@ -82,23 +87,21 @@ namespace Savedata {
         std::cout << "Technical Info:" << std::endl;
         std::cout << "sizeof(SaveData): " << sizeof(SaveData) << "Bytes (" << sizeof(SaveData)*8 << "bits" << ")\n" << std::endl;
 
-
         std::cout << "Save/Password as:" << std::endl;
         std::cout << "\tBinary: " << std::bitset<sizeof(SD.container)*8>(SD.container) << std::endl;
         std::cout << "\t   Int: " << SD.container << std::endl;
         std::cout << "\t   Hex: " << std::format("{:x}", SD.container) << std::endl;
 
-        const std::string password = PasswordSave::uitob26(SD.container);
+        const std::string password = PasswordSave::serialize<std::uint32_t>(SD.container);
         std::cout << "\n" << "Note: This isn't a standard base 26 that starts at 0. Instead 0 is represented as A" << std::endl;
         std::cout << "Base26 Password: " << password << std::endl;
 
-        std::uint32_t deserializedSave = PasswordSave::b26toui(password);
+        auto deserializedSave = PasswordSave::deserialize<std::uint32_t>(password);
         std::cout << "Deserialized Save: " << std::endl;
         std::cout << "\tBinary: " << std::bitset<sizeof(deserializedSave)*8>(deserializedSave) << std::endl;
         std::cout << "\t   Int: " << deserializedSave << std::endl;
         std::cout << "\t   Hex: " << std::format("{:x}", deserializedSave) << std::endl;
     }
-
 }
 
 int main() {
