@@ -40,6 +40,7 @@ namespace Savedata {
             // 8 + 18 = 26 bit used above. 7 remaining
             // Maybe status effects? Side quests? Skills/Class?
             // Leaning towards Class: Classes could be linear, with new skills being obtained simply by leveling up.
+            uint playerClass : 2 = 0;
         };
 
         std::uint32_t container;
@@ -98,17 +99,17 @@ int main() {
 
     // Some random fake save data
     constexpr Savedata::SaveData sd = {
-        .level = 2,
+        .level = 3,
         .health = 3,
         .potionQuality = 2,
         .potionCount = 6,
         .swordQuality = 3,
         .armorQuality = 4,
         .storyDungeonCompletion = 4,
-        .sideDungeon1 = 1,
-        .sideDungeon2 = 0,
-        .sideDungeon3 = 0,
-        .sideDungeon4 = 0
+        .sideDungeon1 = true,
+        .sideDungeon2 = false,
+        .sideDungeon3 = false,
+        .sideDungeon4 = false
     };
 
     Savedata::printSave(sd);
