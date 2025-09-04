@@ -13,6 +13,7 @@ namespace PasswordSave {
     template<typename T>
     T b26toui(const std::string& input);
 
+
     // Aliases
     template<typename T>
     constexpr std::string(*serialize)(T) = &uitob26<T>;

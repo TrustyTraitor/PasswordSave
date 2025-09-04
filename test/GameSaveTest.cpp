@@ -12,24 +12,19 @@ namespace Savedata {
     #define uint unsigned int
     union SaveData {
         struct {
-            uint level : 4 = 0; // Max level is 15; Level should maybe be lower, like 3 bits to match with dungeon count.
-            uint health : 3 = 0; // Max hearts is 7
+            uint level : 5 = 0; // Max level is 31
+            uint health : 4 = 0; // Max hearts are 15
+            uint playerClass : 2 = 0;
 
             uint potionQuality: 2 = 0; // Max potion quality is 3
             uint potionCount : 3 = 0; // Max potion count is 7
 
             // Sword/Armor follows basc quality for 0-3, beyond that is unique weapons/armors.
-            uint swordQuality : 3 = 0; // Max sword quality is 7
+            uint weaponQuality : 3 = 0; // Max sword quality is 7
             uint armorQuality : 3 = 0; // Max armor quality is 7
 
             // Main dungeons are linear
             uint storyDungeonCompletion : 3 = 0; // Max (linear) dungeons are 7.
-            /* If dungeons are non-linear, then individual bits will be required. This will also take more bits.
-            * uint storyDungeon1 : 1 = 0;
-            * uint storyDungeon2 : 1 = 0;
-            * uint storyDungeon3 : 1 = 0;
-            * uint storyDungeon4 : 1 = 0;
-             */
 
             // Simple boolean on if the dungeon has been completed.
             // Side dungeons are optional and may be completed in different orders, and as such, require separate boolean flags
@@ -37,10 +32,10 @@ namespace Savedata {
             uint sideDungeon2 : 1 = 0;
             uint sideDungeon3 : 1 = 0;
             uint sideDungeon4 : 1 = 0;
-            // 8 + 18 = 26 bit used above. 7 remaining
-            // Maybe status effects? Side quests? Skills/Class?
-            // Leaning towards Class: Classes could be linear, with new skills being obtained simply by leveling up.
-            uint playerClass : 2 = 0;
+            uint sideDungeon5 : 1 = 0;
+            uint sideDungeon6 : 1 = 0;
+            uint sideDungeon7 : 1 = 0;
+
         };
 
         std::uint32_t container;
@@ -61,17 +56,33 @@ namespace Savedata {
         }
     }
 
+    inline std::string getClass(const int playerClass) {
+        switch (playerClass) {
+            case 0:
+                return "Warrior";
+            case 1:
+                return "Wizard";
+            case 2:
+                return "Rogue";
+            case 3:
+                return "Ranger";
+            default:
+                return "Error.";
+        }
+    }
+
     inline void printSave(const SaveData SD) {
         std::cout
         << "Player Info:" << "\n"
-        << " - Level: " << SD.level << " (Max: 15)"  << "\n"
-        << " - Health: " << SD.health << " (Max: 7)" << "\n"
+        << " - Level: " << SD.level << " (Max: 13)"  << "\n"
+        << " - Health: " << SD.health << " (Max: 15)" << "\n"
+        << " - Class: " << SD.playerClass << " (" << getClass(SD.playerClass) << ")" << "\n"
         << "Item Info:"
             << " Possible quality levels are: " << getQuality(0) << ", " << getQuality(1)
             << ", " << getQuality(2) << ", or " << getQuality(4) << "\n"
-        << " - PotionCount: " << SD.potionCount << " (Max: 7)" << "\n"
-        << " - PotionQuality: " << SD.potionQuality << " (" << getQuality(SD.potionQuality) << ") " << "\n"
-        << " - Sword Quality: " << SD.swordQuality << " (" <<getQuality(SD.swordQuality) <<  ") " << "\n"
+        << " - Potion Count: " << SD.potionCount << " (Max: 7)" << "\n"
+        << " - Potion Quality: " << SD.potionQuality << " (" << getQuality(SD.potionQuality) << ") " << "\n"
+        << " - Weapon Quality: " << SD.weaponQuality << " (" <<getQuality(SD.weaponQuality) <<  ") " << "\n"
         << " - Armor Quality: " << SD.armorQuality << " (" << getQuality(SD.armorQuality) << ") " << "\n"
         << "Dungeons Completed: " << "\n"
         << " - " << SD.storyDungeonCompletion << "\n"
@@ -80,6 +91,9 @@ namespace Savedata {
         << "   - Side Dungeon 2: " << SD.sideDungeon2 << "\n"
         << "   - Side Dungeon 3: " << SD.sideDungeon3 << "\n"
         << "   - Side Dungeon 4: " << SD.sideDungeon4 << "\n"
+        << "   - Side Dungeon 5: " << SD.sideDungeon5 << "\n"
+        << "   - Side Dungeon 6: " << SD.sideDungeon6 << "\n"
+        << "   - Side Dungeon 7: " << SD.sideDungeon7 << "\n"
         << std::endl;
     }
 
@@ -101,24 +115,32 @@ namespace Savedata {
         std::cout << "\tBinary: " << std::bitset<sizeof(deserializedSave)*8>(deserializedSave) << std::endl;
         std::cout << "\t   Int: " << deserializedSave << std::endl;
         std::cout << "\t   Hex: " << std::format("{:x}", deserializedSave) << std::endl;
+
     }
 }
 
 int main() {
 
     // Some random fake save data
-    constexpr Savedata::SaveData sd = {
-        .level = 3,
-        .health = 3,
-        .potionQuality = 2,
+    Savedata::SaveData sd = {
+        .level = 2,
+        .health = 1,
+        .playerClass = 1,
+
+        .potionQuality = 1,
         .potionCount = 6,
-        .swordQuality = 3,
-        .armorQuality = 4,
-        .storyDungeonCompletion = 4,
-        .sideDungeon1 = true,
-        .sideDungeon2 = false,
-        .sideDungeon3 = false,
-        .sideDungeon4 = false
+
+        .weaponQuality = 2,
+        .armorQuality = 2,
+
+        .storyDungeonCompletion = 2,
+        .sideDungeon1 = 1,
+        .sideDungeon2 = 1,
+        .sideDungeon3 = 0,
+        .sideDungeon4 = 0,
+        .sideDungeon5 = 0,
+        .sideDungeon6 = 0,
+        .sideDungeon7 = 0,
     };
 
     Savedata::printSave(sd);
