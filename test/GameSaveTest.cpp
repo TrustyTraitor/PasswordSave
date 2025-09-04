@@ -33,10 +33,10 @@ namespace Savedata {
 
             // Simple boolean on if the dungeon has been completed.
             // Side dungeons are optional and may be completed in different orders, and as such, require separate boolean flags
-            bool sideDungeon1 : 1 = 0;
-            bool sideDungeon2 : 1 = 0;
-            bool sideDungeon3 : 1 = 0;
-            bool sideDungeon4 : 1 = 0;
+            uint sideDungeon1 : 1 = 0;
+            uint sideDungeon2 : 1 = 0;
+            uint sideDungeon3 : 1 = 0;
+            uint sideDungeon4 : 1 = 0;
             // 8 + 18 = 26 bit used above. 7 remaining
             // Maybe status effects? Side quests? Skills/Class?
             // Leaning towards Class: Classes could be linear, with new skills being obtained simply by leveling up.
@@ -91,6 +91,12 @@ namespace Savedata {
         const std::string password = PasswordSave::uitob26(SD.container);
         std::cout << "\n" << "Note: This isn't a standard base 26 that starts at 0. Instead 0 is represented as A" << std::endl;
         std::cout << "Base26 Password: " << password << std::endl;
+
+        std::uint32_t deserializedSave = PasswordSave::b26toui(password);
+        std::cout << "Deserialized Save: " << std::endl;
+        std::cout << "\tBinary: " << std::bitset<sizeof(deserializedSave)*8>(deserializedSave) << std::endl;
+        std::cout << "\t   Int: " << deserializedSave << std::endl;
+        std::cout << "\t   Hex: " << std::format("{:x}", deserializedSave) << std::endl;
     }
 
 }
@@ -113,7 +119,6 @@ int main() {
     };
 
     Savedata::printSave(sd);
-    std::cout << std::endl << std::endl;
     Savedata::printSaveTechnical(sd);
 
     return 0;

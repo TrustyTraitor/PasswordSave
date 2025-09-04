@@ -1,8 +1,9 @@
 //
 // Created by Mikey on 9/2/2025.
 //
-#include <string>
-#include <cmath> // Would be nice if this could be replaced
+#include <string> // Would be nice if this could be replaced
+#include <cmath> // and this
+#include <algorithm> // and this too
 
 namespace PasswordSave {
 
@@ -22,6 +23,8 @@ namespace PasswordSave {
                 output += static_cast<char>(remainder + 'A');
             }
 
+            std::ranges::reverse(output);
+
             return output;
         }
 
@@ -36,14 +39,6 @@ namespace PasswordSave {
 
             return output;
         }
-    }
-
-    std::string uitob2(const unsigned int input) {
-        return uitobX(input, 2);
-    }
-
-    unsigned int b2toui(const std::string& input) {
-        return bXtoui(input, 2);
     }
 
     std::string uitob26(const unsigned int input) {
